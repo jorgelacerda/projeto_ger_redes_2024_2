@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Sensores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function fetchAndGenerate() {
+            fetch("/generate_and_run")
+            .then(response => response.json())
+            .then(data => {
+                let table = document.getElementById("sensorTable");
+                table.innerHTML = "<tr><th>ID Sensor</th><th>Temperatura ºC</th><th>Defeito</th></tr>";
+
+                for (let id = 1; id <= 20; id++) {
+                    let row = table.insertRow();
+                    let sensor = data.find(item => item.idSensor == id);
+                    
+                    row.insertCell(0).textContent = id;
+                    row.insertCell(1).textContent = sensor && sensor.temperature !== "-" ? sensor.temperature : "-";
+                    row.insertCell(2).textContent = sensor && sensor.label !== "-" 
+                        ? (sensor.label == 1 ? "Sim" : "Não") 
+                        : "-";
+                }
+            })
+            .catch(error => console.error("Erro ao buscar dados:", error));
+        }
+    </script>
+</head>
+<body>
+    <h2>Tabela de Sensores</h2>
+    <button onclick="fetchAndGenerate()">Gerar e Exibir Tabela</button>
+    <table id="sensorTable" border="1"></table>
+</body>
+</html>
